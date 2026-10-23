@@ -1,0 +1,154 @@
+DAY 2: FUNCTIONS — 23 OCTOBER 2026
+=================================
+
+1. DEFINE AND CALL A FUNCTION
+What: A function is a named block of instructions.
+Why: Reuse logic and give each part of a program one clear job.
+Example:
+  fn greet() {
+      println!("Hello!");
+  }
+
+  fn main() {
+      greet();
+      greet();
+  }
+Defining greet does not run it. Each call runs it once: two calls print twice.
+// starts a comment. Writing // greet(); disables that call.
+
+2. PARAMETERS AND ARGUMENTS
+What: Parameters receive values supplied when calling a function.
+Why: Reuse the same instructions with different inputs.
+Example:
+  fn greet(step: i32) {
+      println!("Starting step {}", step);
+  }
+  // In main:
+  greet(1);
+  greet(2);
+step is the parameter; 1 and 2 are arguments supplied by the calls.
+Function parameters need explicit types.
+
+3. RETURN A VALUE
+What: -> i32 promises an integer result to the caller.
+Why: Other code can store and use the result.
+Example:
+  fn move_particle(position: i32, speed: i32) -> i32 {
+      return position + speed;
+  }
+  // In main:
+  let new_position = move_particle(10, 5);
+  println!("Position {}", new_position); // Position 15
+Returning a value does not automatically print it.
+
+4. RETURN WITH OR WITHOUT THE KEYWORD
+These function bodies both return the sum:
+  return position + speed;
+OR:
+  position + speed
+Why: Rust returns the final expression's value when there is no semicolon.
+Writing only position + speed; discards the result, so it cannot satisfy -> i32.
+Use return for an explicit or early exit; the final expression is another option.
+The declared return type is still required for an ordinary function returning i32.
+
+5. FUNCTIONS WITHOUT A WRITTEN RETURN TYPE
+What: Omitting -> means the function returns (), called unit.
+Why: Some functions perform an action without producing a useful result.
+Example:
+  fn check_speed(speed: i32) {
+      if speed > 8 {
+          println!("Too fast!");
+          return;
+      }
+      println!("Normal speed");
+  }
+return; leaves the function without a useful result.
+return 5; gives back a number and needs a matching return type, such as -> i32.
+
+Unit is not an empty string:
+  fn do_nothing() {}
+  // In main:
+  let result = do_nothing();
+  println!("{:?}", result); // ()
+{} cannot display unit. {:?} is debug formatting and can show it as ().
+If you only need the action, just call do_nothing(); without storing or printing.
+
+6. INTEGER AND FLOAT TYPES
+  i32: signed 32-bit integer, such as 5.
+  f32: 32-bit floating-point number, such as 5.0.
+A parameter declared f32 needs a compatible argument: greet(1.0), not greet(1).
+
+Numeric cast example:
+  fn move_particle(position: f32, speed: i32) -> f32 {
+      position + speed as f32
+  }
+Why: Both operands of this addition need compatible types.
+Use speed as f32, not f32(speed): f32 is a type, not a callable function.
+If the function already returns i32, no extra as i32 is needed at its call site.
+Note: Numeric casts can lose precision; these small examples are exact.
+
+7. CASTING DOES NOT ROUND
+  15.8 as i32                  gives 15 (fraction removed toward zero).
+  (-15.8_f32) as i32           gives -15.
+  (10.8_f32 + 5.0).round()     gives floating-point 16.0.
+  (10.8_f32 + 5.0).round() as i32
+                              gives integer 16.
+Why: Choose whether you want to drop the fraction or round to the nearest integer.
+.round() on a float still returns a float; the cast changes it to an integer.
+
+8. DISPLAYING DECIMAL PLACES
+Example:
+  let value: f32 = 2.009;
+  println!("{}", value);       // Default display.
+  println!("{:.2}", value);    // 2.01
+Default display omits unnecessary trailing zeros: 1.0 can print as 1.
+{:.2} displays two decimal places and rounds the displayed result.
+It does not change the stored value or its type.
+Practice: 3.456 displayed with {:.2} is 3.46.
+
+9. TODAY'S COMPLETED CHALLENGE
+Functions:
+  limit_speed(speed: i32) -> i32
+    Return 8 if speed > 8; otherwise return the supplied speed.
+  move_particle(position: i32, speed: i32) -> i32
+    Return position + speed.
+
+main starts at position 0 and speed 2. For at most 10 steps:
+  1. Increase speed by 2.
+  2. Set speed to limit_speed(speed).
+  3. Set position to move_particle(position, speed).
+  4. Print step, speed, position.
+  5. If position >= 25, print Destination reached and break.
+After the loop: print Simulation finished.
+
+Expected trace:
+  Step 1: speed 4, position 4
+  Step 2: speed 6, position 10
+  Step 3: speed 8, position 18
+  Step 4: speed 8, position 26 -> stop
+Use >= 25 to include landing exactly on 25.
+break leaves the loop, so the final message still runs.
+Your completed code is in src/main.rs. It compiled without warnings.
+
+10. LOCAL WORKFLOW
+Run today's project:
+  cd ~/Downloads/rust-learning/lessons/2026-10-23-practice
+  cargo run
+If Cargo is not found in a new Terminal session:
+  source "$HOME/.cargo/env"
+Do not run cargo init again; the project already exists.
+Save your source file and say "check" in our chat for a local code review.
+
+Git reminder:
+  git status                  See changes.
+  git add <file-or-folder>     Stage the changes you choose.
+  git commit -m "message"      Save a local snapshot.
+  git push                    Upload to the configured GitHub branch.
+Our root .gitignore uses **/target/ to exclude builds in every lesson,
+and .DS_Store to exclude macOS Finder metadata.
+Keep source, notes, Cargo.toml and Cargo.lock in Git.
+
+RECAP
+A parameter is an input. A return value is an output.
+-> states the output type. return exits the function.
+Printing and returning are separate actions.
